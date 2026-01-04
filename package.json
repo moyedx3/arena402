@@ -1,0 +1,22 @@
+{
+  "name": "arena402",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter @arena402/api dev",
+    "build": "pnpm --filter @arena402/api build",
+    "db:generate": "pnpm --filter @arena402/api db:generate",
+    "db:migrate": "pnpm --filter @arena402/api db:migrate",
+    "db:studio": "pnpm --filter @arena402/api db:studio",
+    "lint": "pnpm -r lint",
+    "format": "pnpm -r format"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  }
+}

@@ -674,12 +674,4 @@ With header: `X-Payment: <base64-encoded-payment-requirements>`
 
 ---
 
-## Future Enhancements (v2+)
 
-- Channel-level paywalls (pay once for all blocks)
-- Subscription model (monthly access)
-- Revenue sharing for connected blocks
-- Analytics dashboard for creators
-- Bulk pricing (discount for multiple blocks)
-- Fiat on-ramp integration
-- Mobile app support
