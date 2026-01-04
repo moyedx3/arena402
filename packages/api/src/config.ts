@@ -1,6 +1,8 @@
 import { config } from "dotenv";
+import { resolve } from "path";
 
-config();
+// Load .env from project root (two levels up from packages/api/src)
+config({ path: resolve(import.meta.dirname, "../../../.env") });
 
 export const env = {
   port: parseInt(process.env.PORT || "3000", 10),
