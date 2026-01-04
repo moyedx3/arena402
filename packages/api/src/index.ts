@@ -4,6 +4,7 @@ import { env, isDevelopment } from "./config.js";
 import arenaRoutes from "./routes/arena.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
+import paywallRoutes from "./routes/paywall.js";
 
 const app = express();
 
@@ -33,6 +34,9 @@ app.use("/auth", authRoutes);
 
 // User routes
 app.use("/user", userRoutes);
+
+// Paywall routes
+app.use("/paywall", paywallRoutes);
 
 // Are.na proxy routes
 app.use("/v2", arenaRoutes);
@@ -70,8 +74,12 @@ app.listen(env.port, () => {
     POST /auth/logout               - Log out
     GET  /user/profile              - Get user profile
     PUT  /user/wallet               - Update wallet address
-    GET  /v2/channels/:slug         - Get channel info
-    GET  /v2/channels/:slug/contents - Get channel contents
-    GET  /v2/blocks/:id             - Get block content
+    POST /paywall/configure         - Create/update paywall
+    GET  /paywall/:blockId          - Get paywall info
+    DELETE /paywall/:blockId        - Remove paywall
+    GET  /paywall                   - List my paywalls
+    GET  /v2/channels/:slug         - Get channel (with paywall metadata)
+    GET  /v2/channels/:slug/contents - Get contents (with paywall metadata)
+    GET  /v2/blocks/:id             - Get block (402 if paywalled)
   `);
 });
