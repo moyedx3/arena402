@@ -8,6 +8,18 @@ Arena x402 enables Are.na users to monetize their curated content (blocks) via x
 
 ---
 
+## Implementation Status
+
+| Phase | Status | Description |
+|-------|--------|-------------|
+| **Phase 1: Core Backend** | ✅ Complete | Express server, PostgreSQL, Drizzle ORM, Are.na proxy |
+| **Phase 2: Authentication** | ✅ Complete | OAuth with Are.na, JWT sessions, wallet linking |
+| **Phase 3: Paywall Logic** | ✅ Complete | Paywall configuration, access grants, 402 responses |
+| **Phase 4: x402 Integration** | ✅ Complete | Full x402 protocol, payment verification, settlement |
+| **Phase 5: Frontend** | ⏳ Pending | Fork ervell, add paywall UI |
+
+---
+
 ## Problem Statement
 
 Are.na is a platform where users curate knowledge, inspiration, and references into channels. This curation work has value, but currently there's no way for creators to monetize their taste and effort. Meanwhile, AI agents increasingly need access to high-quality, human-curated content.
@@ -399,79 +411,83 @@ X-Payment: eyJzY2hlbWUiOiJleGFjdCIsIm5ldHdvcmsiOiJiYXNlIi4uLn0=
 ## Project Structure
 
 ```
-arena-x402/
+arena402/
 ├── packages/
-│   ├── api/                      # x402 Proxy API
-│   │   ├── src/
-│   │   │   ├── index.ts          # Express app entry
-│   │   │   ├── config.ts         # Environment config
-│   │   │   ├── middleware/
-│   │   │   │   ├── x402.ts       # Payment verification
-│   │   │   │   ├── auth.ts       # JWT/session auth
-│   │   │   │   └── proxy.ts      # Are.na proxy logic
-│   │   │   ├── routes/
-│   │   │   │   ├── arena.ts      # Proxied Are.na endpoints
-│   │   │   │   ├── auth.ts       # OAuth endpoints
-│   │   │   │   ├── paywall.ts    # Paywall config endpoints
-│   │   │   │   └── user.ts       # User profile/wallet
-│   │   │   ├── services/
-│   │   │   │   ├── arena.ts      # Are.na API client
-│   │   │   │   ├── paywall.ts    # Paywall business logic
-│   │   │   │   ├── payment.ts    # x402 payment handling
-│   │   │   │   └── user.ts       # User management
-│   │   │   └── db/
-│   │   │       ├── index.ts      # Database connection
-│   │   │       ├── schema.ts     # Drizzle schema
-│   │   │       └── migrations/   # SQL migrations
-│   │   ├── package.json
-│   │   └── tsconfig.json
-│   │
-│   └── web/                      # Forked ervell (future)
-│       └── ... (modifications TBD)
+│   └── api/                      # x402 Proxy API
+│       ├── src/
+│       │   ├── index.ts          # Express app entry
+│       │   ├── config.ts         # Environment config
+│       │   ├── middleware/
+│       │   │   ├── x402.ts       # x402 payment verification & settlement
+│       │   │   └── auth.ts       # JWT/session auth
+│       │   ├── routes/
+│       │   │   ├── arena.ts      # Proxied Are.na endpoints with x402
+│       │   │   ├── auth.ts       # OAuth endpoints
+│       │   │   ├── paywall.ts    # Paywall config endpoints
+│       │   │   └── user.ts       # User profile/wallet
+│       │   ├── services/
+│       │   │   ├── arena.ts      # Are.na API client
+│       │   │   ├── paywall.ts    # Paywall business logic
+│       │   │   ├── payment.ts    # Payment recording & USDC conversion
+│       │   │   ├── accessGrant.ts # Access grant management
+│       │   │   └── user.ts       # User management
+│       │   └── db/
+│       │       ├── index.ts      # Database connection
+│       │       └── schema.ts     # Drizzle schema (users, paywalls, payments, accessGrants)
+│       ├── drizzle/              # SQL migrations
+│       ├── package.json
+│       └── tsconfig.json
+│
+├── scripts/
+│   ├── test-x402.ts              # Quick 402 response test
+│   └── test-x402-payment.ts      # Full payment flow test with wallet
 │
 ├── docker-compose.yml            # PostgreSQL for dev
 ├── package.json                  # Workspace root
 ├── pnpm-workspace.yaml
-├── spec.md                       # This file
-└── README.md
+├── spec.md                       # This specification
+├── README.md                     # Quick start guide
+├── todo-milestone*.md            # Milestone tracking
+└── .env.example                  # Environment template
 ```
 
 ---
 
 ## Implementation Phases
 
-### Phase 1: Core Backend Infrastructure
-- Initialize monorepo with pnpm workspaces
-- Set up Express server with TypeScript
-- Configure PostgreSQL with Drizzle ORM
-- Implement database schema and migrations
-- Create basic Are.na API proxy (passthrough)
+### Phase 1: Core Backend Infrastructure ✅
+- [x] Initialize monorepo with pnpm workspaces
+- [x] Set up Express server with TypeScript
+- [x] Configure PostgreSQL with Drizzle ORM
+- [x] Implement database schema and migrations
+- [x] Create basic Are.na API proxy (passthrough)
 
-### Phase 2: Authentication
-- Implement OAuth flow with Are.na
-- JWT session management
-- User profile storage
-- Wallet address linking endpoint
+### Phase 2: Authentication ✅
+- [x] Implement OAuth flow with Are.na
+- [x] JWT session management
+- [x] User profile storage
+- [x] Wallet address linking endpoint
 
-### Phase 3: Paywall Logic
-- Paywall configuration endpoints
-- Block access checking
-- Access grant storage
-- Proxy enhancement to check paywalls
+### Phase 3: Paywall Logic ✅
+- [x] Paywall configuration endpoints
+- [x] Block access checking
+- [x] Access grant storage
+- [x] Proxy enhancement to check paywalls
 
-### Phase 4: x402 Payment Integration
-- x402 middleware for 402 responses
-- Payment signature verification
-- Integration with x402 facilitator
-- On-chain settlement on Base
-- Payment and access grant recording
+### Phase 4: x402 Payment Integration ✅
+- [x] x402 middleware for 402 responses
+- [x] Payment signature verification via facilitator
+- [x] Integration with x402 facilitator (HTTPFacilitatorClient)
+- [x] On-chain settlement on Base via facilitator
+- [x] Payment and access grant recording
+- [x] Dynamic per-block pricing (custom middleware)
 
-### Phase 5: Frontend (Future)
-- Fork ervell repository
-- Add paywall toggle to block creation
-- Implement blurred preview component
-- Payment modal with wallet connection
-- User settings page for wallet/earnings
+### Phase 5: Frontend (Pending)
+- [ ] Fork ervell repository
+- [ ] Add paywall toggle to block creation
+- [ ] Implement blurred preview component
+- [ ] Payment modal with wallet connection
+- [ ] User settings page for wallet/earnings
 
 ---
 
@@ -483,7 +499,7 @@ PORT=3000
 NODE_ENV=development
 
 # Database
-DATABASE_URL=postgres://user:pass@localhost:5432/arena402
+DATABASE_URL=postgres://arena402:arena402@localhost:5432/arena402
 
 # Are.na OAuth
 ARENA_CLIENT_ID=your_client_id
@@ -491,16 +507,15 @@ ARENA_CLIENT_SECRET=your_client_secret
 ARENA_REDIRECT_URI=http://localhost:3000/auth/arena/callback
 
 # JWT
-JWT_SECRET=your_jwt_secret
+JWT_SECRET=your_jwt_secret_min_32_chars_long
 
 # x402 / Base
-X402_FACILITATOR_URL=https://x402.org/facilitator
+FACILITATOR_URL=https://x402.org/facilitator
 BASE_RPC_URL=https://mainnet.base.org
 USDC_CONTRACT_ADDRESS=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
 
-# Settlement (optional - for direct settlement)
-SETTLEMENT_MODE=facilitator  # or 'direct'
-MERCHANT_PRIVATE_KEY=       # only if direct settlement
+# Network: eip155:8453 for Base mainnet, eip155:84532 for Base Sepolia testnet
+BASE_NETWORK_ID=eip155:8453
 ```
 
 ---

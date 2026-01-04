@@ -1,10 +1,10 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, type Router as RouterType } from "express";
 import { arenaClient, ArenaApiError, type ArenaBlock } from "../services/arena.js";
 import { getPaywallsForBlocks, getPaywallByBlockId } from "../services/paywall.js";
-import { getBlockAccessStatus } from "../services/accessGrant.js";
 import { optionalAuth, type AuthenticatedRequest } from "../middleware/auth.js";
+import { x402PaywallMiddleware } from "../middleware/x402.js";
 
-const router = Router();
+const router: RouterType = Router();
 
 // Apply optional auth to all routes to extract wallet from JWT if available
 router.use(optionalAuth);
@@ -124,8 +124,8 @@ router.get("/channels/:slug/contents", async (req: Request, res: Response) => {
 });
 
 // GET /v2/blocks/:id
-// Proxy to Are.na, checks paywall status and access
-router.get("/blocks/:id", async (req: Request, res: Response) => {
+// Proxy to Are.na, uses x402 middleware for paywall protection
+router.get("/blocks/:id", x402PaywallMiddleware, async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id, 10);
 
@@ -136,37 +136,10 @@ router.get("/blocks/:id", async (req: Request, res: Response) => {
       });
     }
 
-    // Get wallet address from request
-    const walletAddress = getWalletFromRequest(req);
-
-    // Check paywall and access status
-    const accessStatus = await getBlockAccessStatus(id, walletAddress);
-
-    // If paywalled and no access, return 402 (or 403 for now, until x402 is integrated)
-    if (accessStatus.isPaywalled && !accessStatus.hasAccess) {
-      // Get full paywall info for response
-      const paywall = await getPaywallByBlockId(id);
-
-      // In Milestone 4, this will be a proper 402 with x402 headers
-      // For now, return 402 with paywall info
-      return res.status(402).json({
-        error: "Payment required",
-        message: "This block requires payment to access",
-        paywall: {
-          blockId: id,
-          priceUsdc: accessStatus.priceUsdc,
-          currency: "USDC",
-          network: "base",
-          recipientWallet: accessStatus.recipientWallet,
-          ownerUsername: paywall?.ownerUsername,
-        },
-      });
-    }
-
-    // Fetch and return block content
+    // If we reach here, user has access (middleware handled payment/access check)
     const block = await arenaClient.getBlock(id);
 
-    // Add paywall metadata even to accessible blocks
+    // Add paywall metadata to response
     const paywall = await getPaywallByBlockId(id);
     const blockWithPaywall: BlockWithPaywall = {
       ...block,

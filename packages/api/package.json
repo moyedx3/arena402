@@ -16,12 +16,17 @@
     "format:check": "prettier --check \"src/**/*.ts\""
   },
   "dependencies": {
+    "@x402/core": "^2.1.0",
+    "@x402/evm": "^2.1.0",
+    "@x402/express": "^2.1.0",
+    "@x402/fetch": "^2.1.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.38.3",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.3",
-    "postgres": "^3.4.5"
+    "postgres": "^3.4.5",
+    "viem": "^2.43.5"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",

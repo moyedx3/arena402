@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, type Router as RouterType } from "express";
 import { env, isDevelopment } from "../config.js";
 import { ArenaClient } from "../services/arena.js";
 import { findOrCreateUser } from "../services/user.js";
@@ -11,7 +11,7 @@ import {
   type JwtPayload,
 } from "../middleware/auth.js";
 
-const router = Router();
+const router: RouterType = Router();
 
 const ARENA_AUTH_URL = "https://dev.are.na/oauth/authorize";
 const ARENA_TOKEN_URL = "https://dev.are.na/oauth/token";

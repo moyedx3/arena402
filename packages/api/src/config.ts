@@ -21,6 +21,8 @@ export const env = {
   facilitatorUrl: process.env.FACILITATOR_URL || "https://x402.org/facilitator",
   baseRpcUrl: process.env.BASE_RPC_URL || "https://mainnet.base.org",
   usdcContractAddress: process.env.USDC_CONTRACT_ADDRESS || "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+  // Base network: eip155:8453 for mainnet, eip155:84532 for Sepolia testnet
+  baseNetworkId: (process.env.BASE_NETWORK_ID || "eip155:8453") as "eip155:8453" | "eip155:84532",
 } as const;
 
 export const isProduction = env.nodeEnv === "production";

@@ -1,8 +1,8 @@
-import { Router, Response } from "express";
+import { Router, Response, type Router as RouterType } from "express";
 import { requireAuth, type AuthenticatedRequest, setTokenCookie, generateToken, type JwtPayload } from "../middleware/auth.js";
 import { getUserById, updateWalletAddress, isValidEthereumAddress } from "../services/user.js";
 
-const router = Router();
+const router: RouterType = Router();
 
 /**
  * GET /user/profile

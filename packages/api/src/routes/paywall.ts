@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, type Router as RouterType } from "express";
 import { requireAuth, optionalAuth, type AuthenticatedRequest } from "../middleware/auth.js";
 import {
   createPaywall,
@@ -11,7 +11,7 @@ import {
 } from "../services/paywall.js";
 import { getUserById } from "../services/user.js";
 
-const router = Router();
+const router: RouterType = Router();
 
 /**
  * POST /paywall/configure
